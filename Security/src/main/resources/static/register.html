@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Secure Account</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #e9ecef; margin: 0; }
+    .register-container { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); width: 350px; }
+    h2 { text-align: center; color: #333; margin-bottom: 20px; }
+    label { font-weight: bold; font-size: 0.9em; color: #555; display: block; margin-top: 10px; }
+    input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; margin-top: 20px; background-color: #28a745; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold; }
+    button:hover { background-color: #218838; }
+    .error { color: red; font-size: 0.9em; margin-top: 10px; text-align: center; }
+    .login-link { text-align: center; margin-top: 20px; font-size: 0.9em; }
+    .login-link a { color: #007bff; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<div class="register-container">
+  <h2>New User Registration</h2>
+
+  <label for="username">Username</label>
+  <input type="text" id="username" placeholder="Enter a unique username">
+
+  <label for="password">Password</label>
+  <input type="password" id="password" placeholder="Enter a strong password">
+
+  <label for="confirm-password">Confirm Password</label>
+  <input type="password" id="confirm-password" placeholder="Repeat your password">
+
+  <button onclick="register()">Create Account</button>
+
+  <p id="msg" class="error"></p>
+
+  <div class="login-link">
+    Already have an account? <a href="index.html">Login here</a>
+  </div>
+</div>
+
+<script>
+  async function register() {
+    const u = document.getElementById("username").value;
+    const p = document.getElementById("password").value;
+    const cp = document.getElementById("confirm-password").value;
+    const msg = document.getElementById("msg");
+
+    // Client-side Validation (Making it "Detailed")
+    if (p !== cp) {
+      msg.innerText = "Error: Passwords do not match!";
+      return;
+    }
+    if (p.length < 3) {
+      msg.innerText = "Error: Password is too short!";
+      return;
+    }
+
+    // Send to Backend
+    const response = await fetch("http://localhost:8080/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: u, password: p })
+    });
+
+    if (response.ok) {
+      alert("Registration Successful! Redirecting to Login...");
+      window.location.href = "index.html";
+    } else {
+      msg.innerText = "Registration Failed: Username already exists.";
+    }
+  }
+</script>
+</body>
+</html>

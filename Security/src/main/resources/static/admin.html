@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
+    .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+    th { background-color: #333; color: white; }
+    .admin-btn { background-color: #007bff; color: white; padding: 10px; border: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Administrator Dashboard</h2>
+  <p>Manage registered users and view system activity.</p>
+  <button class="admin-btn" onclick="window.location.href='notes.html'">Back to Notes</button>
+
+  <table>
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Username</th>
+      <th>Role</th>
+    </tr>
+    </thead>
+    <tbody id="user-table-body"></tbody>
+  </table>
+</div>
+
+<script>
+  async function loadAllUsers() {
+    const token = localStorage.getItem("jwt_token");
+    const res = await fetch("http://localhost:8080/api/admin/users", {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    if (res.ok) {
+      const users = await res.json();
+      document.getElementById("user-table-body").innerHTML = users.map(u => `
+                    <tr>
+                        <td>${u.id}</td>
+                        <td>${u.username}</td>
+                        <td>${u.role}</td>
+                    </tr>
+                `).join('');
+    } else {
+      alert("Access Denied: Admin only!");
+      window.location.href = 'notes.html';
+    }
+  }
+  loadAllUsers();
+</script>
+</body>
+</html>
